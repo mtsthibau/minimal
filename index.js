@@ -40,7 +40,10 @@ class Index {
         };
 
         const response = await fetch(`http://localhost/index.php?file=${file}`, options);
-        return await response.json();
+        var blob =  await response.blob();
+
+        var fileDownload = window.URL.createObjectURL(blob);
+        window.location.assign(fileDownload);
     }
 
 

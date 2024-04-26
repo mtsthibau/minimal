@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $fileName = $_GET['file'];
 
     $file = getFile($fileName);
-    echo json_encode(array('message' => $files));
+    return $file;
 }
 
 
@@ -33,7 +33,30 @@ function getFilesFromDir()
     return $paths;
 }
 
-function getFile($fileName){
-    return 'file';
-}
+function getFile($fileName)
+{
 
+    if (!$fileName) {
+        return "missing file name";
+    }
+
+    $file = basename($fileName);
+    $file = '/var/www/hermes-api/' . $file;
+
+    if (!file_exists($file)) { // file does not exist
+        return 'file not found';
+    }
+
+    header("Cache-Control: public");
+    header("Content-Description: File Transfer");
+    header("Content-Disposition: attachment; filename=$fileName");
+    //Define Content Type
+    //File can be created as text but need to be tested after converted
+    header("Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    header("Content-Transfer-Encoding: binary");
+
+    // read the file from disk
+    readfile($file);
+
+    return $file;
+}
